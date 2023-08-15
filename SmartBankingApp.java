@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.util.Scanner;
 
 public class SmartBankingApp {
@@ -31,9 +30,9 @@ public class SmartBankingApp {
             final String APP_TITLE = String.format("%s", screen);
 
             System.out.println(CLEAR);
-            System.out.println("-".repeat(40));
-            System.out.println("\033[32;1m ".repeat((40 - (APP_TITLE.length()))/2).concat(APP_TITLE).concat("\033[32;0m"));
-            System.out.println("-".repeat(40));
+            System.out.println("-".repeat(70));
+            System.out.println("\033[32;1m ".repeat((70 - (APP_TITLE.length()))/2).concat(APP_TITLE).concat("\033[32;0m"));
+            System.out.println("-".repeat(70));
 
             switch(screen) {
                 case DASHBOARD:
@@ -187,7 +186,7 @@ public class SmartBankingApp {
                     break;
 
 
-                    case WITHDRAW_MONEY:
+                case WITHDRAW_MONEY:
                     String accNumberSearchW;
                     int indexW = 0;
                     do {
@@ -261,7 +260,7 @@ public class SmartBankingApp {
                     break;
 
 
-                    case TRANSFER_MONEY:
+                case TRANSFER_MONEY:
                     String accNumberSearchFrom;
                     int indexFrom = 0;
                     do {
@@ -305,6 +304,7 @@ public class SmartBankingApp {
                             System.out.println();
                         }
                     }while (!valid);
+
                     String accNumberSearchTo;
                     int indexTo = 0;
                     do {
@@ -386,6 +386,61 @@ public class SmartBankingApp {
                     break;
 
 
+                case CHECK_ACCOUNT_BALANCE:
+                    String accNumberSearchChk;
+                    int indexChk = 0;
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter the Account Number to Check Balance : ");
+                        accNumberSearchChk = SCANNER.nextLine().toUpperCase().strip();
+                        if (accNumberSearchChk.isBlank()){
+                            System.out.printf(ERROR_MSG, "Account Number can't be empty");
+                            valid = false;
+                        }else if (!accNumberSearchChk.startsWith("SDB-") || accNumberSearchChk.length() < 5){
+                            System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                            valid = false;
+                        }else{
+                            String accNumber = accNumberSearchChk.substring(4);
+                            for (int i = 0; i < accNumber.length(); i++) {
+                                if (!Character.isDigit(accNumber.charAt(i))){
+                                    System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            boolean exists = false;
+                            for (int i = 0; i < accountNumbers.length; i++) {
+                                if (accountNumbers[i].equals(accNumberSearchChk)){
+                                    indexChk = i;
+                                    exists = true;
+                                    break;
+                                }
+                            }    
+                            if (!exists){
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Account Number does not exist");
+                            }
+                        }
+                        if (!valid) {
+                            System.out.print("\n\tDo you want to try again? (Y/n)");
+                            if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
+                                screen = DASHBOARD;
+                                continue mainLoop;
+                            }
+                            System.out.println();
+                        }
+                    }while (!valid);
+                    
+                    System.out.printf("\tAccount Holder : %s\n",accountNames[indexChk]);
+                    System.out.printf("\tAccount Current Balance : Rs.%,.2f\n",accountBalance[indexChk]);
+                    System.out.println();
+                    System.out.printf("\tAvailable Balance to Withdraw : Rs.%,.2f\n", (accountBalance[indexChk] - 500));
+                    
+                    System.out.print("\tDo you want to continue checking balance (Y/n)? ");
+                    if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                    screen = DASHBOARD;
+                    break;
+  
 
 
 
