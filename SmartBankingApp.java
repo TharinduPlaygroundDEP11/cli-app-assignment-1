@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class SmartBankingApp {
@@ -54,6 +55,66 @@ public class SmartBankingApp {
 
                 
                 case OPEN_ACCOUNT:
+                    int number = (int) (Math.random() * Math.pow(4, 10));
+                    String formattedNumber = String.format("SDB-%05d", number);
+                    System.out.printf("\tNew Account Number : %s \n", formattedNumber);
+
+                    boolean valid;
+                    String name;
+                    double amount = 0;
+                    do{
+                        valid = true;
+                        System.out.print("\tEnter Account Holder's Name : ");
+                        name = SCANNER.nextLine().strip();
+                        if (name.isBlank()){
+                            System.out.printf(ERROR_MSG, "Name can't be empty");
+                            valid = false;
+                            continue;
+                        }
+                        for (int i = 0; i < name.length(); i++) {
+                            if (!(Character.isLetter(name.charAt(i)) || 
+                                Character.isSpaceChar(name.charAt(i))) ) {
+                                System.out.printf(ERROR_MSG, "Invalid Name");
+                                valid = false;
+                                break;
+                            }
+                        }
+                        boolean valid1;
+                        do {
+                            valid1 = true;
+                            System.out.print("\tEnter Initial Deposit Amount : ");
+                            amount = SCANNER.nextDouble();
+                            SCANNER.nextLine();
+                        
+                            if (amount < 5000) {
+                                System.out.printf(ERROR_MSG, "Insufficient Initial Amount");
+                                valid1 = false;
+                                continue;
+                            }valid = true;
+                        } while (!valid1);
+
+                    }while(!valid);
+                    String[] newAccNumber = new String[accountNumbers.length + 1];
+                    String[] newAccName = new String[newAccNumber.length];
+                    double[] newAccBalance = new double[newAccNumber.length];
+
+                    for (int i = 0; i < accountNumbers.length; i++) {
+                        newAccNumber[i] = accountNumbers[i];
+                        newAccName[i] = accountNames[i];
+                        newAccBalance[i] = accountBalance[i];
+                    }
+                    newAccNumber[newAccNumber.length-1] = formattedNumber;
+                    newAccName[newAccName.length-1] = name;
+                    newAccBalance[newAccBalance.length-1] = amount;
+                    accountNumbers = newAccNumber;
+                    accountNames = newAccName;
+                    accountBalance = newAccBalance;
+
+                    System.out.println("\t" + formattedNumber + " : " + name);
+                    System.out.printf(SUCCESS_MSG, "Added Successfully!");
+                    System.out.print("Do you want to go back? (Y/n) : ");
+                    if(SCANNER.nextLine().strip().toUpperCase().equals("Y")) screen = DASHBOARD;
+                    break;
                     
 
 
