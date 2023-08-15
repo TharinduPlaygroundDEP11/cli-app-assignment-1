@@ -442,7 +442,88 @@ public class SmartBankingApp {
                     break;
   
 
+                case DROP_ACCOUNT:
+                    String accNumberSearchDrop;
+                    int indexDrop = 0;
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter the Account Number Delete : ");
+                        accNumberSearchDrop = SCANNER.nextLine().toUpperCase().strip();
+                        if (accNumberSearchDrop.isBlank()){
+                            System.out.printf(ERROR_MSG, "Account Number can't be empty");
+                            valid = false;
+                        }else if (!accNumberSearchDrop.startsWith("SDB-") || accNumberSearchDrop.length() < 5){
+                            System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                            valid = false;
+                        }else{
+                            String accNumber = accNumberSearchDrop.substring(4);
+                            for (int i = 0; i < accNumber.length(); i++) {
+                                if (!Character.isDigit(accNumber.charAt(i))){
+                                    System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            boolean exists = false;
+                            for (int i = 0; i < accountNumbers.length; i++) {
+                                if (accountNumbers[i].equals(accNumberSearchDrop)){
+                                    indexDrop = i;
+                                    exists = true;
+                                    break;
+                                }
+                            }    
+                            if (!exists){
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Account Number does not exist");
+                            }
+                        }
+                        if (!valid) {
+                            System.out.print("\n\tDo you want to try again? (Y/n)");
+                            if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
+                                screen = DASHBOARD;
+                                continue mainLoop;
+                            }
+                            System.out.println();
+                        }
+                    }while (!valid);
 
+                    System.out.printf("\tAccount Holder : %s\n",accountNames[indexDrop]);
+                    System.out.printf("\tAccount Balance : Rs.%,.2f\n",accountBalance[indexDrop]);
+                    System.out.println();
+                    System.out.print("\tAre you sure want to delete this account? (Y/n) ");
+
+                    String[] accNoDroped = new String[accountNumbers.length - 1];
+                    String[] accNameDropped = new String[accNoDroped.length];
+                    double[] accBalDropped = new double[accNoDroped.length];
+
+                    if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) {
+                        for (int i = 0; i < accountNumbers.length; i++) {
+                            if (i < indexDrop){
+                                accNoDroped[i] = accountNumbers[i];
+                                accNameDropped[i] = accountNames[i];
+                                accBalDropped[i] = accountBalance[i];
+                            }else if (i == indexDrop){
+                                continue;
+                            }else{
+                                accNoDroped[i - 1] = accountNumbers[i];
+                                accNameDropped[i - 1] = accountNames[i];
+                                accBalDropped[i - 1] = accountBalance[i];
+                            }
+                        }
+                        accountNumbers = accNoDroped;
+                        accountNames = accNameDropped;
+                        accountBalance = accBalDropped;
+
+                        System.out.println();
+                        System.out.printf(SUCCESS_MSG, 
+                            String.format("%s has been deleted successfully", accountNumbers[indexDrop]));
+                        System.out.print("\tDo you want to continue delete (Y/n)? ");
+                        if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                        screen = DASHBOARD;
+                        break;
+                    }
+                    screen = DASHBOARD;
+                    break;
 
                 default: continue;
             }
