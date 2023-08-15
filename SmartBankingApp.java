@@ -260,6 +260,135 @@ public class SmartBankingApp {
                     screen = DASHBOARD;
                     break;
 
+
+                    case TRANSFER_MONEY:
+                    String accNumberSearchFrom;
+                    int indexFrom = 0;
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter the From Account Number : ");
+                        accNumberSearchFrom = SCANNER.nextLine().toUpperCase().strip();
+                        if (accNumberSearchFrom.isBlank()){
+                            System.out.printf(ERROR_MSG, "Account Number can't be empty");
+                            valid = false;
+                        }else if (!accNumberSearchFrom.startsWith("SDB-") || accNumberSearchFrom.length() < 5){
+                            System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                            valid = false;
+                        }else{
+                            String accNumber = accNumberSearchFrom.substring(4);
+                            for (int i = 0; i < accNumber.length(); i++) {
+                                if (!Character.isDigit(accNumber.charAt(i))){
+                                    System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            boolean exists = false;
+                            for (int i = 0; i < accountNumbers.length; i++) {
+                                if (accountNumbers[i].equals(accNumberSearchFrom)){
+                                    indexFrom = i;
+                                    exists = true;
+                                    break;
+                                }
+                            }    
+                            if (!exists){
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Account Number does not exist");
+                            }
+                        }
+                        if (!valid) {
+                            System.out.print("\n\tDo you want to try again? (Y/n)");
+                            if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
+                                screen = DASHBOARD;
+                                continue mainLoop;
+                            }
+                            System.out.println();
+                        }
+                    }while (!valid);
+                    String accNumberSearchTo;
+                    int indexTo = 0;
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter the To Account Number : ");
+                        accNumberSearchTo = SCANNER.nextLine().toUpperCase().strip();
+                        if (accNumberSearchTo.isBlank()){
+                            System.out.printf(ERROR_MSG, "Account Number can't be empty");
+                            valid = false;
+                        }else if (!accNumberSearchTo.startsWith("SDB-") || accNumberSearchTo.length() < 5){
+                            System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                            valid = false;
+                        }else{
+                            String accNumber = accNumberSearchTo.substring(4);
+                            for (int i = 0; i < accNumber.length(); i++) {
+                                if (!Character.isDigit(accNumber.charAt(i))){
+                                    System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            boolean exists = false;
+                            for (int i = 0; i < accountNumbers.length; i++) {
+                                if (accountNumbers[i].equals(accNumberSearchTo)){
+                                    indexTo = i;
+                                    exists = true;
+                                    break;
+                                }
+                            }    
+                            if (!exists){
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Account Number does not exist");
+                            }
+                        }
+                        if (!valid) {
+                            System.out.print("\n\tDo you want to try again? (Y/n)");
+                            if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
+                                screen = DASHBOARD;
+                                continue mainLoop;
+                            }
+                            System.out.println();
+                        }
+                    }while (!valid);
+
+                    System.out.printf("\tFrom Account Holder : %s\n",accountNames[indexFrom]);
+                    System.out.printf("\tFrom Account Current Balance : Rs.%,.2f\n",accountBalance[indexFrom]);
+                    System.out.println();
+                    System.out.printf("\tTo Account Holder : %s\n",accountNames[indexTo]);
+                    System.out.printf("\tTo Account Current Balance : Rs.%,.2f\n",accountBalance[indexTo]);
+
+                    do {
+                        valid1 = true;
+                        System.out.print("\n\tEnter Your Transfer Amount : ");
+                        amount = SCANNER.nextDouble();
+                        SCANNER.nextLine();
+                        
+                        if(amount < 100) {
+                            System.out.printf(ERROR_MSG, "Invalid transfer, transfer should be more than Rs.100/=");
+                            valid1 = false;
+                            continue;
+                        }
+                        if(((accountBalance[indexFrom] - amount) - (0.02 * amount)) < 500){
+                            System.out.printf(ERROR_MSG, "Invalid transfer, Remaining balance should be more than Rs.500/=");
+                            valid1 = false;
+                            continue;
+                        }
+                    } while (!valid1);
+
+                    accountBalance[indexFrom] -= (amount + (0.02 * amount));
+                    accountBalance[indexTo] += amount;
+
+                    System.out.printf("\tFrom Account New Balance : Rs.%,.2f\n",accountBalance[indexFrom]);
+                    System.out.printf("\tTo Account New Balance : Rs.%,.2f\n",accountBalance[indexTo]);
+                    System.out.println();
+                    System.out.printf(SUCCESS_MSG, "Money Transfer Successfull! (2% bank chargers deducted)");
+                    System.out.print("\tDo you want to continue transfer (Y/n)? ");
+                    if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                    screen = DASHBOARD;
+                    break;
+
+
+
+
+
                 default: continue;
             }
 
