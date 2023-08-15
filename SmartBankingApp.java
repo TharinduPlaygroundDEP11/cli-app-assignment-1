@@ -26,6 +26,7 @@ public class SmartBankingApp {
 
         String screen = DASHBOARD;
 
+        mainLoop:
         do {
             final String APP_TITLE = String.format("%s", screen);
 
@@ -110,13 +111,82 @@ public class SmartBankingApp {
                     accountNames = newAccName;
                     accountBalance = newAccBalance;
 
-                    System.out.println("\t" + formattedNumber + " : " + name);
-                    System.out.printf(SUCCESS_MSG, "Added Successfully!");
+                    System.out.printf(SUCCESS_MSG, String.format("%s : %s Added Successfully!", formattedNumber, name));
                     System.out.print("Do you want to go back? (Y/n) : ");
                     if(SCANNER.nextLine().strip().toUpperCase().equals("Y")) screen = DASHBOARD;
                     break;
                     
+                
+                case DEPOSIT_MONEY:
+                    String accNumberSearch;
+                    int index = 0;
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter the Account Number : ");
+                        accNumberSearch = SCANNER.nextLine().toUpperCase().strip();
+                        if (accNumberSearch.isBlank()){
+                            System.out.printf(ERROR_MSG, "Account Number can't be empty");
+                            valid = false;
+                        }else if (!accNumberSearch.startsWith("SDB-") || accNumberSearch.length() < 5){
+                            System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                            valid = false;
+                        }else{
+                            String accNumber = accNumberSearch.substring(4);
+                            for (int i = 0; i < accNumber.length(); i++) {
+                                if (!Character.isDigit(accNumber.charAt(i))){
+                                    System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            boolean exists = false;
+                            for (int i = 0; i < accountNumbers.length; i++) {
+                                if (accountNumbers[i].equals(accNumberSearch)){
+                                    index = i;
+                                    exists = true;
+                                    break;
+                                }
+                            }    
+                            if (!exists){
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Account Number does not exist");
+                            }
+                        }
+                        if (!valid) {
+                            System.out.print("\n\tDo you want to try again? (Y/n)");
+                            if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
+                                screen = DASHBOARD;
+                                continue mainLoop;
+                            }
+                            System.out.println();
+                        }
+                    }while (!valid);
+                    System.out.printf("\tAccount Holder : %s\n",accountNames[index]);
+                    System.out.printf("\tCurrent Balance : Rs.%,.2f\n",accountBalance[index]);
+                    boolean valid1;
+                        do {
+                            valid1 = true;
+                            System.out.print("\tEnter Your Deposit Amount : ");
+                            amount = SCANNER.nextDouble();
+                            SCANNER.nextLine();
+                        
+                            if (amount < 500) {
+                                System.out.printf(ERROR_MSG, "Insufficient Amount, Should be more than Rs.500/=");
+                                valid1 = false;
+                                continue;
+                            }valid = true;
+                        } while (!valid1);
+                    accountBalance[index] += amount;
+                    System.out.printf("\tNew Balance : Rs.%,.2f\n",accountBalance[index]);
+                    System.out.println();
+                    System.out.printf(SUCCESS_MSG, String.format("%s : %s Deposited Successfully!", accountNumbers[index], accountNames[index]));
+                    System.out.print("\tDo you want to continue adding (Y/n)? ");
+                    if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                    screen = DASHBOARD;
+                    break;
 
+
+                    
 
                 default: continue;
             }
