@@ -174,19 +174,91 @@ public class SmartBankingApp {
                                 System.out.printf(ERROR_MSG, "Insufficient Amount, Should be more than Rs.500/=");
                                 valid1 = false;
                                 continue;
-                            }valid = true;
+                            }
                         } while (!valid1);
+
                     accountBalance[index] += amount;
                     System.out.printf("\tNew Balance : Rs.%,.2f\n",accountBalance[index]);
                     System.out.println();
                     System.out.printf(SUCCESS_MSG, String.format("%s : %s Deposited Successfully!", accountNumbers[index], accountNames[index]));
-                    System.out.print("\tDo you want to continue adding (Y/n)? ");
+                    System.out.print("\tDo you want to continue deposit (Y/n)? ");
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
                     break;
 
 
-                    
+                    case WITHDRAW_MONEY:
+                    String accNumberSearchW;
+                    int indexW = 0;
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter the Account Number : ");
+                        accNumberSearchW = SCANNER.nextLine().toUpperCase().strip();
+                        if (accNumberSearchW.isBlank()){
+                            System.out.printf(ERROR_MSG, "Account Number can't be empty");
+                            valid = false;
+                        }else if (!accNumberSearchW.startsWith("SDB-") || accNumberSearchW.length() < 5){
+                            System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                            valid = false;
+                        }else{
+                            String accNumber = accNumberSearchW.substring(4);
+                            for (int i = 0; i < accNumber.length(); i++) {
+                                if (!Character.isDigit(accNumber.charAt(i))){
+                                    System.out.printf(ERROR_MSG, "Invalid Account Number format");
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            boolean exists = false;
+                            for (int i = 0; i < accountNumbers.length; i++) {
+                                if (accountNumbers[i].equals(accNumberSearchW)){
+                                    indexW = i;
+                                    exists = true;
+                                    break;
+                                }
+                            }    
+                            if (!exists){
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Account Number does not exist");
+                            }
+                        }
+                        if (!valid) {
+                            System.out.print("\n\tDo you want to try again? (Y/n)");
+                            if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
+                                screen = DASHBOARD;
+                                continue mainLoop;
+                            }
+                            System.out.println();
+                        }
+                    }while (!valid);
+                    System.out.printf("\tAccount Holder : %s\n",accountNames[indexW]);
+                    System.out.printf("\tCurrent Balance : Rs.%,.2f\n",accountBalance[indexW]);
+                    do {
+                        valid1 = true;
+                        System.out.print("\tEnter Your Withdraw Amount : ");
+                        amount = SCANNER.nextDouble();
+                        SCANNER.nextLine();
+                        
+                        if(amount < 100) {
+                            System.out.printf(ERROR_MSG, "Invalid withdrawal, withdraw should be more than Rs.100/=");
+                            valid1 = false;
+                            continue;
+                        }
+                        if((accountBalance[indexW] - amount) < 500){
+                            System.out.printf(ERROR_MSG, "Invalid withdrawal, Remaining balance should be more than Rs.500/=");
+                            valid1 = false;
+                            continue;
+                        }
+                    } while (!valid1);
+
+                    accountBalance[indexW] -= amount;
+                    System.out.printf("\tNew Balance : Rs.%,.2f\n",accountBalance[indexW]);
+                    System.out.println();
+                    System.out.printf(SUCCESS_MSG, String.format("%s : %s Withdraw Successfull!", accountNumbers[indexW], accountNames[indexW]));
+                    System.out.print("\tDo you want to continue withdraw (Y/n)? ");
+                    if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                    screen = DASHBOARD;
+                    break;
 
                 default: continue;
             }
