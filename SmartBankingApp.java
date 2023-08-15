@@ -55,8 +55,8 @@ public class SmartBankingApp {
 
                 
                 case OPEN_ACCOUNT:
-                    int number = (int) (Math.random() * Math.pow(4, 10));
-                    String formattedNumber = String.format("SDB-%05d", number);
+                    int number = (int) (Math.random() * Math.pow(3, 10));
+                    String formattedNumber = String.format("SDB-%4s", number);
                     System.out.printf("\tNew Account Number : %s \n", formattedNumber);
 
                     boolean valid;
@@ -515,8 +515,7 @@ public class SmartBankingApp {
                         accountBalance = accBalDropped;
 
                         System.out.println();
-                        System.out.printf(SUCCESS_MSG, 
-                            String.format("%s has been deleted successfully", accountNumbers[indexDrop]));
+                        System.out.printf(SUCCESS_MSG, "Account has been deleted successfully");
                         System.out.print("\tDo you want to continue delete (Y/n)? ");
                         if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                         screen = DASHBOARD;
